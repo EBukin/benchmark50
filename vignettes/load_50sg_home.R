@@ -12,7 +12,7 @@ library(tidyr)
 library(ggplot2)
 
 # Loading data to the environment 
-load("../../../R_Code/50SG/data/all_forms.Rdata")
+load("E:/Google Drive/R_Code/50SG/data/all_forms.Rdata")
 
 
 
