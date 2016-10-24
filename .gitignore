@@ -35,7 +35,6 @@ vignettes/*.pdf
 *.knit.md
 
 # Documents folder
-/documents/
 .Rproj.user
 *.docx
 *.xlsx
