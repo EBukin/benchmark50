@@ -50,6 +50,7 @@ folder <- "eko_apk_2016/output/"
 
 # After sourcing the script for loading data we get a dataset "sgData"
 source("vignettes/load_50sg_work.R")
+source("vignettes/load_50sg_home.R")
 
 # For the purposes of this example we use only one year and one form of reporting.
 data <- sgData %>% filter(god == 2012, forma == "50")
@@ -156,6 +157,8 @@ write.csv(
   row.names = FALSE
 )
 
+
+# Table of histogram summary ---
 # Mean Mode Mediane of efficiency
 getmode <- function(v) {
   uniqv <- unique(v)
@@ -167,7 +170,8 @@ ddply(eff_data,
       function(x) {
         data.frame(Mean = mean(x$eff_vrs, na.rm = TRUE),
                    Mode = getmode(x$eff_vrs),
-                   Median = median(x$eff_vrs, na.rm = TRUE))
+                   Median = median(x$eff_vrs, na.rm = TRUE),
+                   n = nrow(x))
       }) %>% 
   bind_rows(
     data_frame(
@@ -179,6 +183,30 @@ ddply(eff_data,
   write.csv(file =  paste0(folder, "mean_mode_yields_group.csv"))
 
 
+# Top 10 accordding to the size -------
+eff_data %>% 
+  ungroup() %>% 
+  mutate(Rank =  seq(1,nrow(.),1)) %>% 
+  arrange(desc(Area)) %>% 
+  slice(1:10) %>% 
+  select(Rank, Area, Production, Total_costs, eff_vrs, eff_crs, Yields, `Efficiency group`) %>% 
+  write.csv(file =  paste0(folder, "top_10_size.csv"))
+
+
+# Share of efficient and inefficient recource use -------
+eff_data %>% 
+  ungroup %>% 
+  select(Area, Production, Total_costs, `Efficiency group`) %>% 
+  group_by(`Efficiency group`) %>% 
+  summarise_each(funs(sum), Area, Production, Total_costs) %>% 
+  ungroup() %>% 
+  gather(Var, Value, 2:4) %>% 
+  group_by(Var) %>% 
+  mutate(sum_var = sum(Value)) %>% 
+  rowwise() %>% 
+  mutate(share = Value / sum_var * 100) %>% 
+  ungroup() %>% 
+  write.csv(file =  paste0(folder, "Area_prod_costs_shres_by_eff.csv"), row.names = FALSE)
 
 
 # Saving graphical output -------------------------------------------------
