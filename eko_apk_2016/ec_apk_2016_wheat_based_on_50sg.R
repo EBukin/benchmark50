@@ -287,7 +287,7 @@ ggplot(eff_data, aes(x = Yields, fill = `Efficiency group`)) +
   scale_x_continuous( limits = c(0,90)) + 
   theme_minimal() +
   xlab("Урожайність, ц/га") +
-  ylab("Щильність розподілу") 
+  ylab("Щільність розподілу") 
 
 dev.off()
 
