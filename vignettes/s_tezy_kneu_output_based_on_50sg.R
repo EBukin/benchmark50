@@ -44,7 +44,8 @@ folder <- "output/kneu_tezy_september_2016/"
 # Preparing data ----------------------------------------------------------
 
 # After sourcing the script for loading data we get a dataset "sgData"
-source("scripts/loading_50sg_data.R")
+# source("scripts/loading_50sg_data.R")
+source("vignettes/load_50sg_work.R")
 
 # For the purposes of this example we use only one year and one form of reporting.
 data <- sgData %>% filter(god == 2012, forma == "50")
