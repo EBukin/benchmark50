@@ -133,7 +133,7 @@ eff_data <-
       ifelse(
         eff_vrs > 0.65,
         "3. eff > 65%",
-        ifelse(eff_vrs > 0.3 , "2. 30% > eff <= 65%", "1. eff <= 30%")
+        ifelse(eff_vrs > 0.3 , "2. 30% < eff <= 65%", "1. eff <= 30%")
       ))
 
 
@@ -168,20 +168,30 @@ getmode <- function(v) {
 ddply(eff_data,
       .(`Efficiency group`),
       function(x) {
-        data.frame(Mean = mean(x$eff_vrs, na.rm = TRUE),
-                   Mode = getmode(x$eff_vrs),
-                   Median = median(x$eff_vrs, na.rm = TRUE),
-                   n = nrow(x))
-      }) %>% 
+        data.frame(
+          Mean = mean(x$eff_vrs, na.rm = TRUE),
+          Mode = getmode(x$eff_vrs),
+          Median = median(x$eff_vrs, na.rm = TRUE),
+          n = nrow(x),
+          sd_eff = sd(x$eff_vrs),
+          sum_area = sum(x$Area),
+          mean_area = mean(x$Area),
+          sd_area = sd(x$Area)
+        )
+      }) %>%
   bind_rows(
     data_frame(
       `Efficiency group` = "All",
       Mean = mean(eff_data$eff_vrs, na.rm = TRUE),
       Mode = getmode(eff_data$eff_vrs),
-      Median = median(eff_data$eff_vrs, na.rm = TRUE))
-    ) %>% 
+      Median = median(eff_data$eff_vrs, na.rm = TRUE),
+      sd_eff = sd(eff_data$eff_vrs),
+      sum_area = sum(eff_data$Area),
+      mean_area = mean(eff_data$Area),
+      sd_area = sd(eff_data$Area)
+    )
+  ) %>%
   write.csv(file =  paste0(folder, "mean_mode_yields_group.csv"))
-
 
 # Top 10 accordding to the size -------
 eff_data %>% 
