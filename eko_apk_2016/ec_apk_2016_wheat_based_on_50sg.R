@@ -279,7 +279,9 @@ png(
 hist(eff_data$eff_vrs, 
      main = "", 
      xlab = "Ефективність підприємств зі зміним ефектом масштабу",
-     ylab = "Частота")
+     ylab = "Частота",
+     density = 20,
+     col = "black")
 
 dev.off()
 
@@ -288,16 +290,46 @@ png(
   filename = paste0(folder, "Fig 4. Yields distribution based on efficiecny group.png"),
   width = 20,
   height = 14,
-  units = "cm", 
+  units = "cm",
   res = 300
 )
 
-ggplot(eff_data, aes(x = Yields, fill = `Efficiency group`)) +
-  geom_density(alpha = .3) +
-  scale_x_continuous( limits = c(0,90)) + 
-  theme_minimal() +
-  xlab("Урожайність, ц/га") +
-  ylab("Щільність розподілу") 
+# ggplot(eff_data, aes(x = Yields, 
+#                      fill = `Efficiency group`, 
+#                      linetype = `Efficiency group`)) +
+#   geom_density(alpha = .3) +
+#   scale_x_continuous( limits = c(0,90)) + 
+#   theme_minimal() +
+#   xlab("Урожайність, ц/га") +
+#   ylab("Щільність розподілу") 
+
+X1 <- filter(eff_data, `Efficiency group` == "1. eff <= 30%")$Yields
+X2 <- filter(eff_data, `Efficiency group` == "2. 30% < eff <= 65%")$Yields
+X3 <- filter(eff_data, `Efficiency group` == "3. eff > 65%")$Yields
+
+plot.new()
+plot.window(
+  xlim = c(min(density(X1)$x, density(X2)$x, density(X3)$x),
+           max(density(X1)$x, density(X2)$x, density(X3)$x)), 
+  ylim = c(min(density(X1)$y, density(X2)$y, density(X3)$y),
+           max(density(X1)$y, density(X2)$y, density(X3)$y)))
+grid()
+axis(1)
+axis(2)
+title(ylab = "Щільність розподілу",
+      xlab = "Урожайність, ц/га")
+legend("topright", 
+       legend=c("1. eff <= 30%", 
+                "2. 30% < eff <= 65%",
+                "3. eff > 65%"), 
+       density=c(20, 20, 20), 
+       angle = c(135, 90, 45),
+       bty="n", 
+       border=c("black", "black", "black")) 
+polygon(density(X1), density = 20, angle = 135)
+polygon(density(X2), density = 20, angle = 90)
+polygon(density(X3), density = 20, angle = 45)
+
 
 dev.off()
 
